@@ -1,0 +1,36 @@
+name: devops
+
+services:
+  backend:
+    build:
+      context: ../../LR1/backend
+      dockerfile: Dockerfile
+    image: backend:2.0
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      DATA_DIR: /app/data
+    volumes:
+      - ./data:/app/data
+    expose:
+      - "3000"
+    networks:
+      - app-net
+
+  frontend:
+    build:
+      context: ../../LR1/frontend
+      dockerfile: Dockerfile
+    image: frontend:2.0
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
