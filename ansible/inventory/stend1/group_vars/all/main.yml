@@ -1,0 +1,18 @@
+---
+# Переменные для ВСЕХ хостов инвентаря stend1
+
+ansible_python_interpreter: /usr/bin/python3
+ms_project_dir: /opt/cms
+ 
+ms_git_repos:
+  - path: LR1/frontend
+    url: https://github.com/Daniel-Ohaio/frontend.git
+    version: v2.0
+  - path: LR1/backend
+    url: https://github.com/Daniel-Ohaio/backend.git
+    version: v2.0
+  - path: LR2/DevOps
+    url: https://github.com/Daniel-Ohaio/DevOps.git
+    version: main
+    
+    

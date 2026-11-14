@@ -1,0 +1,75 @@
+---
+- name: Установить необходимые зависимости
+  ansible.builtin.apt:
+    name: "{{ ms_docker_prereq_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+ 
+- name: Создать каталог для ключей apt
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+ 
+- name: Скачать GPG-ключ репозитория Docker
+  ansible.builtin.get_url:
+    url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+ 
+- name: Подключить apt-репозиторий Docker
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [arch={{ ms_docker_apt_arch }} signed-by=/etc/apt/keyrings/docker.asc]
+      https://download.docker.com/linux/{{ ansible_distribution | lower }}
+      {{ ansible_distribution_release }} stable
+    filename: docker
+    state: present
+    update_cache: true
+ 
+- name: Установить Docker Engine и плагин Docker Compose
+  ansible.builtin.apt:
+    name: "{{ ms_docker_packages }}"
+    state: present
+ 
+- name: Настроить демон Docker
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart docker
+ 
+- name: Выполнение обработчиков
+  ansible.builtin.meta: flush_handlers
+ 
+- name: Запустить службу Docker
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+ 
+- name: Добавить пользователя в группу docker
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  loop: "{{ ms_docker_users }}"
+ 
+- name: Узнать версию Docker
+  ansible.builtin.command: docker --version
+  register: ms_docker_version
+  changed_when: false
+ 
+- name: Узнать версию Docker Compose
+  ansible.builtin.command: docker compose version
+  register: ms_compose_version
+  changed_when: false
+ 
+- name: Показать установленные версии
+  ansible.builtin.debug:
+    msg:
+      - "{{ ms_docker_version.stdout }}"
+      - "{{ ms_compose_version.stdout }}"

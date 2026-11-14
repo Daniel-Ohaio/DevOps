@@ -1,0 +1,14 @@
+---
+- name: Проверить наличие компоуз файла
+  ansible.builtin.stat:
+    path: "{{ ms_compose_dir }}/{{ ms_compose_file }}"
+  register: ms_compose_stat
+ 
+- name: Убедиться, что проект раскатан
+  ansible.builtin.assert:
+    that:
+      - ms_compose_stat.stat.exists
+    fail_msg: >-
+      Файл {{ ms_compose_dir }}/{{ ms_compose_file }} не найден.
+      Сначала выполните раскатку: ansible-playbook playbook.yml --tags deploy
+    quiet: true

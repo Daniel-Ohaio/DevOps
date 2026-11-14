@@ -1,0 +1,42 @@
+---
+# Значения по умолчанию роли
+ms_project_dir: /opt/cms
+ms_git_repos: []
+ 
+ms_compose_subdir: LR2/DevOps
+ms_compose_file: docker-compose.yml
+ms_compose_dir: "{{ ms_project_dir }}/{{ ms_compose_subdir }}"
+ 
+# Режим сборки образов при раскатке
+ms_compose_build: always
+ 
+# Проверки готовности после запуска
+ms_wait_timeout: 120
+ms_wait_ports: []
+ms_healthcheck_urls: []
+ 
+# Каталоги к созданию (рядом с compose-файлом)
+ms_writable_dirs: []
+ 
+# Пользователи, добавляемые в группу docker
+ms_docker_users:
+  - "{{ ansible_user | default('root') }}"
+ 
+# Пакеты Docker
+ms_docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+
+ms_docker_prereq_packages:
+  - ca-certificates
+  - curl
+  - gnupg
+  - git
+
+# Параметры Docker
+ms_docker_apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+ms_docker_log_max_size: 10m
+ms_docker_log_max_file: "3"

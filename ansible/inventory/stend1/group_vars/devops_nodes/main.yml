@@ -1,0 +1,20 @@
+---
+# Переменные ТОЛЬКО для группы devops_nodes
+ 
+ms_compose_subdir: LR2/DevOps
+ms_compose_file: docker-compose.yml
+ 
+ms_wait_ports:
+  - 8080
+
+ms_healthcheck_urls:
+  - http://127.0.0.1:8080/
+  - http://127.0.0.1:8080/api/data
+ 
+ms_writable_dirs:
+  - { path: data, owner: "1000", group: "1000" }
+ 
+ms_env_vars: {}
+ 
+ms_docker_log_max_size: 10m
+ms_docker_log_max_file: "3"

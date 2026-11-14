@@ -1,0 +1,13 @@
+---
+- name: Проверить наличие compose-файла
+  ansible.builtin.import_tasks: preflight.yml
+ 
+- name: Остановить микросервисы через docker compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ ms_compose_dir }}"
+    files:
+      - "{{ ms_compose_file }}"
+    state: stopped
+ 
+- name: Показать состояние контейнеров
+  ansible.builtin.import_tasks: status.yml

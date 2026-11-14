@@ -1,0 +1,17 @@
+---
+- name: Проверить наличие компоуз файла
+  ansible.builtin.import_tasks: preflight.yml
+ 
+- name: Запустить микросервисы (без пересборки)
+  community.docker.docker_compose_v2:
+    project_src: "{{ ms_compose_dir }}"
+    files:
+      - "{{ ms_compose_file }}"
+    state: present
+    build: never
+ 
+- name: Дождаться готовности сервисов
+  ansible.builtin.import_tasks: wait_ready.yml
+ 
+- name: Показать состояние контейнеров
+  ansible.builtin.import_tasks: status.yml

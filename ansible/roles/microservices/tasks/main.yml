@@ -1,0 +1,29 @@
+---
+- name: Проверка - Ubuntu / Debian  # работаем с менеджером apt
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution in ['Ubuntu', 'Debian']
+    fail_msg: "Роль поддерживает только Ubuntu/Debian"
+    quiet: true
+  tags: [always]
+ 
+- name: Установка Docker и Docker Compose
+  ansible.builtin.import_tasks: subtasks/install_docker.yml
+  tags: [deploy, docker]
+ 
+- name: Клонирование репозиториев
+  ansible.builtin.import_tasks: subtasks/clone_repos.yml
+  tags: [deploy, clone]
+ 
+- name: Раскатка и запуск микросервисов
+  ansible.builtin.import_tasks: subtasks/up.yml
+  tags: [deploy]
+ 
+- name: Старт микросервисов без пересборки
+  ansible.builtin.import_tasks: subtasks/start.yml
+  tags: [start, never]
+ 
+- name: Остановка микросервисов
+  ansible.builtin.import_tasks: subtasks/stop.yml
+  tags: [stop, never]
+

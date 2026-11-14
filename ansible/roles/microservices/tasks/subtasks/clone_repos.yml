@@ -1,0 +1,19 @@
+---
+- name: Создать корневой каталог и каталоги репозиториев
+  ansible.builtin.file:
+    path: "{{ ms_project_dir }}/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ (['.'] + ms_git_repos | map(attribute='path') | map('dirname') | list) | unique }}"
+
+- name: Клонировать репозитории
+  ansible.builtin.git:
+    repo: "{{ item.url }}"
+    dest: "{{ ms_project_dir }}/{{ item.path }}"
+    version: "{{ item.version | default('main') }}"
+    update: true
+    force: true
+    accept_hostkey: true
+  loop: "{{ ms_git_repos }}"
+  loop_control:
+    label: "{{ item.path }} ({{ item.version | default('main') }})"

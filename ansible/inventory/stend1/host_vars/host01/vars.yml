@@ -1,0 +1,8 @@
+---
+# Параметры подключения к конкретной ноде host01
+ansible_host: 192.168.0.103
+ansible_port: 22
+ansible_user: daniilnik
+ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+ 
+ansible_become_password: "{{ vault_become_password }}"

@@ -1,0 +1,36 @@
+---
+- name: Проверить наличие компоуз файла
+  ansible.builtin.import_tasks: preflight.yml
+ 
+- name: Создать каталоги данных на запись
+  ansible.builtin.file:
+    path: "{{ ms_compose_dir }}/{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "0775"
+  loop: "{{ ms_writable_dirs }}"
+  loop_control:
+    label: "{{ item.path }}"
+ 
+- name: Создать файл .env из шаблона
+  ansible.builtin.template:
+    src: env.j2
+    dest: "{{ ms_compose_dir }}/.env"
+    mode: "0644"
+  when: ms_env_vars | length > 0
+ 
+- name: Сборка образов и запуск сервисов через docker compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ ms_compose_dir }}"
+    files:
+      - "{{ ms_compose_file }}"
+    state: present
+    build: "{{ ms_compose_build }}"
+    remove_orphans: true
+ 
+- name: Дождаться готовности сервисов
+  ansible.builtin.import_tasks: wait_ready.yml
+ 
+- name: Показать состояние контейнеров
+  ansible.builtin.import_tasks: status.yml

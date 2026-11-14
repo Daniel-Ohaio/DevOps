@@ -1,0 +1,17 @@
+---
+- name: Ожидание открытия портов
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ item }}"
+    timeout: "{{ ms_wait_timeout }}"
+  loop: "{{ ms_wait_ports }}"
+ 
+- name: Проверка кода 200
+  ansible.builtin.uri:
+    url: "{{ item }}"
+    status_code: 200
+  register: ms_health
+  until: ms_health.status == 200
+  retries: 10
+  delay: 3
+  loop: "{{ ms_healthcheck_urls }}"

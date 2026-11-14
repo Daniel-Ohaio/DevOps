@@ -1,0 +1,11 @@
+---
+- name: Получить список контейнеров
+  ansible.builtin.command: docker compose -f {{ ms_compose_file }} ps -a
+  args:
+    chdir: "{{ ms_compose_dir }}"
+  register: ms_compose_ps
+  changed_when: false
+ 
+- name: Показать состояние контейнеров
+  ansible.builtin.debug:
+    var: ms_compose_ps.stdout_lines

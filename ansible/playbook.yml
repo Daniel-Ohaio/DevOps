@@ -1,0 +1,8 @@
+---
+- name: Раскатка и управление микросервисами на ноде
+  hosts: devops_nodes
+  become: true
+  gather_facts: true
+ 
+  roles:
+    - role: microservices
