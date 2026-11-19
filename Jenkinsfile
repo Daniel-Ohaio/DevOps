@@ -53,8 +53,9 @@ pipeline {
     post {
         success {
             echo 'Микросервисы развернуты и запущены. Сайт: http://192.168.0.103:8080'
-        } failure {
-            echo 'Пайплайн завершился ошибкой – вывод в Console Output.'
+        }
+        failure {
+            echo 'Пайплайн завершился с ошибкой - вывод в Console Output.'
         }
     }
 }
