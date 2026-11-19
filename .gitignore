@@ -1,3 +1,4 @@
+.vault_pass
 data/*
 !data/.gitkeep
 .env
